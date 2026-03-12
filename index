@@ -492,8 +492,8 @@ Preencha a URL e a anon key do Supabase no código antes de usar.
 /* =========================
    COLE AQUI OS DADOS DO SUPABASE
 ========================= */
-const SUPABASE_URL = "sb_publishable_OVqFcK8ONXMTgtq-lGO5zg_scLVUeUb"
-const SUPABASE_ANON_KEY = "sb_secret_p77EsT1rTytDaq2ZYOdSnA_-IyrmEL_"
+const SUPABASE_URL = "postgresql://postgres:[YOUR-PASSWORD]@db.djkdnpjnhtfjmymahbbk.supabase.co:5432/postgres"
+const SUPABASE_ANON_KEY = "sb_publishable_OVqFcK8ONXMTgtq-lGO5zg_scLVUeUb"
 const SUPABASE_BUCKET = "pecas"
 /* ========================= */
 
