@@ -213,24 +213,6 @@ border:1px solid #1f2937;
 background:#0f172a;
 }
 
-.table-wrap::-webkit-scrollbar{
-height:12px;
-}
-
-.table-wrap::-webkit-scrollbar-track{
-background:#0b1220;
-border-radius:999px;
-}
-
-.table-wrap::-webkit-scrollbar-thumb{
-background:#334155;
-border-radius:999px;
-}
-
-.table-wrap::-webkit-scrollbar-thumb:hover{
-background:#475569;
-}
-
 table{
 width:max-content;
 min-width:100%;
@@ -316,67 +298,23 @@ font-size:14px;
 }
 
 @media (max-width:1200px){
-.filtros{
-grid-template-columns:repeat(2,minmax(180px,1fr));
-}
-
-.form{
-grid-template-columns:repeat(2,minmax(0,1fr));
-}
-
-.form-actions{
-grid-column:span 2;
-}
-
-table{
-min-width:1100px;
-}
+.filtros{grid-template-columns:repeat(2,minmax(180px,1fr))}
+.form{grid-template-columns:repeat(2,minmax(0,1fr))}
+.form-actions{grid-column:span 2}
+table{min-width:1100px}
 }
 
 @media (max-width:700px){
-body{
-padding:10px;
-}
-
-.container{
-padding:12px;
-}
-
-h1{
-font-size:24px;
-}
-
-.top-right,
-.top-left{
-width:100%;
-}
-
-.filtros{
-grid-template-columns:1fr;
-}
-
-.form{
-grid-template-columns:1fr;
-}
-
-.form-actions{
-grid-column:span 1;
-flex-direction:column;
-}
-
-.toolbar{
-flex-direction:column;
-}
-
-button,
-.filtro-select,
-.filtro-input{
-width:100%;
-}
-
-table{
-min-width:1000px;
-}
+body{padding:10px}
+.container{padding:12px}
+h1{font-size:24px}
+.top-right,.top-left{width:100%}
+.filtros{grid-template-columns:1fr}
+.form{grid-template-columns:1fr}
+.form-actions{grid-column:span 1;flex-direction:column}
+.toolbar{flex-direction:column}
+button,.filtro-select,.filtro-input{width:100%}
+table{min-width:1000px}
 }
 </style>
 </head>
@@ -421,13 +359,6 @@ Preencha a URL e a anon key do Supabase no código antes de usar.
 
   <div class="top-right">
     <div class="total">Total de peças: <span id="total">0</span></div>
-    <div class="toolbar">
-      <button class="btn-az" id="btnAZ" onclick="toggleAZ()">Ordenar A–Z</button>
-      <button class="btn-export" onclick="exportarExcel()">Exportar Excel</button>
-      <button class="btn-backup" onclick="baixarBackup()">Backup JSON</button>
-      <button class="btn-import" onclick="document.getElementById('importExcel').click()">Importar Excel</button>
-      <input type="file" id="importExcel" class="hidden" accept=".xlsx,.xls" onchange="importarExcel(event)">
-    </div>
   </div>
 </div>
 
@@ -487,15 +418,10 @@ Preencha a URL e a anon key do Supabase no código antes de usar.
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script>
-/* =========================
-   COLE AQUI OS DADOS DO SUPABASE
-========================= */
-const SUPABASE_URL = "https://djkdnpjnhtfjmymahbbk.supabase.co"
-const SUPABASE_ANON_KEY = "sb_publishable_OVqFcK8ONXMTgtq-lGO5zg_scLVUeUb"
+const SUPABASE_URL = "COLE_SUA_SUPABASE_URL_AQUI"
+const SUPABASE_ANON_KEY = "COLE_SUA_SUPABASE_ANON_KEY_AQUI"
 const SUPABASE_BUCKET = "pecas"
-/* ========================= */
 
 let supabaseClient = null
 let dados = []
@@ -658,24 +584,6 @@ function render(){
   document.getElementById("total").innerText = total
 }
 
-function toggleAZ(){
-  modoOrdem = (modoOrdem + 1) % 3
-  const btn = document.getElementById("btnAZ")
-
-  if(modoOrdem === 0){
-    btn.classList.remove("ativo")
-    btn.innerText = "Ordenar A–Z"
-  }else if(modoOrdem === 1){
-    btn.classList.add("ativo")
-    btn.innerText = "Ordenado: A–Z"
-  }else{
-    btn.classList.add("ativo")
-    btn.innerText = "Ordenado: Z–A"
-  }
-
-  render()
-}
-
 async function uploadFoto(file, codigo){
   if(!file) return manterFotoEdicao || ""
 
@@ -700,6 +608,24 @@ async function uploadFoto(file, codigo){
     .getPublicUrl(caminho)
 
   return data.publicUrl
+}
+
+function toggleAZ(){
+  modoOrdem = (modoOrdem + 1) % 3
+  const btn = document.getElementById("btnAZ")
+
+  if(modoOrdem === 0){
+    btn.classList.remove("ativo")
+    btn.innerText = "Ordenar A–Z"
+  }else if(modoOrdem === 1){
+    btn.classList.add("ativo")
+    btn.innerText = "Ordenado: A–Z"
+  }else{
+    btn.classList.add("ativo")
+    btn.innerText = "Ordenado: Z–A"
+  }
+
+  render()
 }
 
 function limparFormulario(){
@@ -842,97 +768,8 @@ async function deletar(codigoCodificado){
   }
 }
 
-function exportarExcel(){
-  const linhas = dados.map(p => ({
-    Estoque: p.estoque || "",
-    Localizacao: p.localizacao || "",
-    Codigo: p.codigo || "",
-    Nome: p.nome || "",
-    Carro: p.carro || "",
-    Condicao: p.condicao || "",
-    Quantidade: Number(p.quantidade || 0),
-    DataCadastro: p.dataCadastro || ""
-  }))
-
-  const ws = XLSX.utils.json_to_sheet(linhas)
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, "Estoque")
-  XLSX.writeFile(wb, "estoque_exportado.xlsx")
-}
-
-function baixarBackup(){
-  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement("a")
-  a.href = url
-  a.download = "backup_estoque.json"
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
-async function importarExcel(event){
-  if(!supabaseClient){
-    mostrarToast("Configure o Supabase primeiro.", "error")
-    return
-  }
-
-  const file = event.target.files[0]
-  if(!file) return
-
-  try{
-    const buffer = await file.arrayBuffer()
-    const workbook = XLSX.read(buffer, { type: "array" })
-    const primeiraAba = workbook.SheetNames[0]
-    const linhas = XLSX.utils.sheet_to_json(workbook.Sheets[primeiraAba], { defval: "" })
-
-    if(!linhas.length){
-      mostrarToast("A planilha está vazia.", "error")
-      return
-    }
-
-    let processadas = 0
-
-    for(const linha of linhas){
-      const codigo = String(linha.Codigo || linha.codigo || "").trim()
-      const nome = String(linha.Nome || linha.nome || "").trim()
-      if(!codigo || !nome) continue
-
-      const registro = {
-        estoque: String(linha.Estoque || linha.estoque || "").trim(),
-        localizacao: String(linha.Localizacao || linha.localizacao || "").trim(),
-        codigo,
-        nome,
-        carro: String(linha.Carro || linha.carro || "").trim(),
-        condicao: String(linha.Condicao || linha.condicao || "").trim(),
-        quantidade: Number(linha.Quantidade || linha.quantidade || 0),
-        data_cadastro: String(linha.DataCadastro || linha.dataCadastro || hojeISO()).trim()
-      }
-
-      const existente = dados.find(p => String(p.codigo) === codigo)
-      if(existente?.foto){
-        registro.foto_url = existente.foto
-      }
-
-      const { error } = await supabaseClient
-        .from("pecas")
-        .upsert([registro], { onConflict: "codigo" })
-
-      if(error) throw error
-      processadas++
-    }
-
-    mostrarToast(`Importação concluída. ${processadas} registro(s) processado(s).`, "success")
-    event.target.value = ""
-    carregar()
-  }catch(e){
-    mostrarToast("Erro ao importar Excel.", "error")
-    console.error(e)
-  }
-}
-
 document.getElementById("dataCadastro").value = hojeISO()
 carregar()
 </script>
 </body>
-
 </html>
